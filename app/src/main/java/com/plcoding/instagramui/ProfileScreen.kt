@@ -1,5 +1,6 @@
 package com.plcoding.instagramui
 
+import android.graphics.drawable.Icon
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -12,16 +13,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -47,6 +51,11 @@ fun ProfileScreen() {
             url = "https://github.com/roshan129",
             followedBy = mutableListOf("codinginflow", "codingwithmitch"),
             othersCount = 13
+        )
+        ButtonSection(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 12.dp, end = 12.dp)
         )
 
 
@@ -218,13 +227,79 @@ fun ProfileDescription(
                 pushStyle(bold)
                 append("$othersCount others")
             },
-            fontWeight = FontWeight.Bold,
             lineHeight = lineHeight,
             letterSpacing = letterSpacing
         )
 
     }
 }
+
+@Composable
+fun ButtonSection(
+    modifier: Modifier,
+) {
+
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+
+        ActionButton(text = "Following", icon = Icons.Default.KeyboardArrowDown)
+        ActionButton(text = "Message", icon = Icons.Default.KeyboardArrowDown)
+        ActionButton(text = "Email", icon = Icons.Default.KeyboardArrowDown)
+        ActionButton(text = null, icon = Icons.Default.KeyboardArrowDown)
+
+
+    }
+
+}
+
+@Composable
+fun ActionButton(
+    text: String?,
+    icon: ImageVector
+) {
+
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .border(
+                width = 1.dp,
+                color = Color.LightGray,
+                shape = RoundedCornerShape(
+                    5.dp
+                )
+            )
+            .padding(top = 4.dp, bottom = 4.dp, start = 10.dp, end = 10.dp)
+    ) {
+        text?.let {
+            Text(
+                text = text,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = Color.Black
+        )
+
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
