@@ -1,10 +1,15 @@
 package com.plcoding.instagramui
 
-import android.graphics.drawable.Icon
+import android.media.Image
+import android.util.Log
+import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -12,20 +17,32 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
+import androidx.compose.material.Tab
+import androidx.compose.material.TabRow
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -37,6 +54,12 @@ import com.plcoding.instagramui.ui.theme.Purple500
 
 @Composable
 fun ProfileScreen() {
+
+    val context = LocalContext.current
+
+    val selectedTabIndex = remember {
+        mutableStateOf(0)
+    }
 
     Column(modifier = Modifier.fillMaxWidth()) {
 
@@ -57,8 +80,69 @@ fun ProfileScreen() {
                 .fillMaxWidth()
                 .padding(start = 12.dp, end = 12.dp)
         )
-
-
+        Spacer(modifier = Modifier.height(8.dp))
+        StoryHightLightSection(
+            mutableListOf(
+                ImageWithText(
+                    image = painterResource(id = R.drawable.youtube),
+                    text = "Youtube"
+                ),
+                ImageWithText(
+                    image = painterResource(id = R.drawable.qa),
+                    text = "Q&A"
+                ),
+                ImageWithText(
+                    image = painterResource(id = R.drawable.discord),
+                    text = "Discord"
+                ),
+                ImageWithText(
+                    image = painterResource(id = R.drawable.telegram),
+                    text = "Telegram"
+                ),
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp),
+        )
+        TabsViewSection(
+            mutableListOf(
+                ImageWithText(
+                    image = painterResource(id = R.drawable.ic_grid),
+                    text = "Grid"
+                ),
+                ImageWithText(
+                    image = painterResource(id = R.drawable.ic_reels),
+                    text = "Reels"
+                ),
+                ImageWithText(
+                    image = painterResource(id = R.drawable.ic_igtv),
+                    text = "Igtv"
+                ),
+                ImageWithText(
+                    image = painterResource(id = R.drawable.profile),
+                    text = "Profile"
+                ),
+            ),
+            modifier = Modifier.fillMaxWidth()
+        ) { selectedIndex ->
+            selectedTabIndex.value = selectedIndex
+        }
+        when (selectedTabIndex.value) {
+            0 -> {
+                PostSection(
+                    posts = mutableListOf(
+                        painterResource(id = R.drawable.kmm),
+                        painterResource(id = R.drawable.intermediate_dev),
+                        painterResource(id = R.drawable.master_logical_thinking),
+                        painterResource(id = R.drawable.bad_habits),
+                        painterResource(id = R.drawable.multiple_languages),
+                        painterResource(id = R.drawable.learn_coding_fast),
+                    ), modifier = Modifier
+                        .fillMaxWidth()
+                        .scale(1.01f)
+                )
+            }
+        }
     }
 
 }
@@ -80,7 +164,7 @@ fun TopBar() {
             modifier = Modifier.size(24.dp)
         )
         Text(
-            text = "_ro_swag",
+            text = "_ro_swag_",
             fontWeight = FontWeight.Bold,
             fontSize = 20.sp
         )
@@ -273,6 +357,9 @@ fun ActionButton(
                 )
             )
             .padding(top = 4.dp, bottom = 4.dp, start = 10.dp, end = 10.dp)
+            .clickable {
+                Log.d("TAG", "ActionButton: Clicked ")
+            },
     ) {
         text?.let {
             Text(
@@ -287,6 +374,105 @@ fun ActionButton(
         )
 
     }
+
+}
+
+@Composable
+fun StoryHightLightSection(
+    highlights: List<ImageWithText>,
+    modifier: Modifier
+) {
+
+    LazyRow(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        items(highlights) {
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(8.dp)
+            ) {
+                RoundImage(image = it.image, modifier = Modifier.size(70.dp))
+                Text(text = it.text, fontSize = 14.sp)
+
+            }
+
+        }
+    }
+}
+
+@Composable
+fun TabsViewSection(
+    images: List<ImageWithText>,
+    modifier: Modifier,
+    onTabSelected: (selectedIndex: Int) -> Unit
+) {
+
+    val selectedTabIndex = remember {
+        mutableStateOf(0)
+    }
+    TabRow(
+        selectedTabIndex = selectedTabIndex.value,
+        modifier = modifier,
+        backgroundColor = Color.Transparent
+    ) {
+
+        images.forEachIndexed { index, imageWithText ->
+            Tab(
+                selected = selectedTabIndex.value == index,
+                selectedContentColor = Color.Black,
+                unselectedContentColor = Color.Gray,
+                onClick = {
+                    selectedTabIndex.value = index
+                    onTabSelected.invoke(index)
+                }) {
+                Icon(
+                    painter = imageWithText.image,
+                    contentDescription = imageWithText.text,
+                    modifier = Modifier
+                        .padding(12.dp)
+                        .size(20.dp),
+                    tint = if (selectedTabIndex.value == index) Color.Black else Color.Gray
+                )
+            }
+        }
+
+    }
+
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun PostSection(
+    posts: List<Painter>,
+    modifier: Modifier
+) {
+
+    LazyVerticalGrid(modifier = modifier, cells = GridCells.Fixed(3), content = {
+
+        items(posts) {
+
+            Image(
+                painter = it,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .aspectRatio(1f)
+                    .border(
+                        width = 1.dp,
+                        color = Color.White,
+                        shape = RectangleShape
+                    ),
+
+                )
+
+        }
+
+
+    })
+
 
 }
 
